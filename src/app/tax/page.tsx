@@ -30,6 +30,7 @@ export default function TaxPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState("");
+  const [showCreds, setShowCreds] = useState(false);
 
   useEffect(() => {
     setAuthed(isLoggedIn());
@@ -97,11 +98,20 @@ export default function TaxPage() {
           </button>
         </form>
 
-        <div className="bg-blue-50 border border-blue-200 rounded-xl px-4 py-3 text-sm text-blue-800">
-          <p className="font-semibold mb-1">Demo credentials</p>
-          <p>Email: <span className="font-mono">{DEMO_EMAIL}</span></p>
-          <p>Password: <span className="font-mono">{DEMO_PASSWORD}</span></p>
-        </div>
+        <button
+          onClick={() => setShowCreds((v) => !v)}
+          className="text-xs text-gray-400 hover:text-gray-600 transition-colors text-center w-full"
+        >
+          {showCreds ? "Hide" : "Show"} demo credentials
+        </button>
+
+        {showCreds && (
+          <div className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-700">
+            <p className="font-semibold mb-1 text-gray-900">Demo credentials</p>
+            <p>Email: <span className="font-mono text-gray-600">{DEMO_EMAIL}</span></p>
+            <p>Password: <span className="font-mono text-gray-600">{DEMO_PASSWORD}</span></p>
+          </div>
+        )}
       </div>
     );
   }
