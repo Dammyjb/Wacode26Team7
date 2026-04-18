@@ -24,6 +24,33 @@ const features = [
   },
 ];
 
+const audiences = [
+  {
+    icon: "🍽️",
+    title: "Restaurants",
+    pain: "End-of-day surplus goes straight to the bin",
+    gain: "Classify leftovers in seconds and route them to food banks — and claim the tax deduction.",
+  },
+  {
+    icon: "🛒",
+    title: "Grocery Stores",
+    pain: "Perishables expire before staff can act",
+    gain: "Scan shelves with your phone. FoodWise identifies items and finds the nearest facility with space.",
+  },
+  {
+    icon: "🏫",
+    title: "School Cafeterias",
+    pain: "Large volumes of daily food waste with no clear process",
+    gain: "Build a repeatable daily workflow — classify, route, document — in under 2 minutes.",
+  },
+  {
+    icon: "🚚",
+    title: "Food Distributors",
+    pain: "Damaged or near-expiry stock is a write-off",
+    gain: "Turn unsellable inventory into documented charitable donations worth real tax savings.",
+  },
+];
+
 const stats = [
   { value: "80M", label: "tons of food wasted annually in the US" },
   { value: "$1.3T", label: "global food waste economic cost per year" },
@@ -35,17 +62,20 @@ export default function Home() {
     <div className="flex flex-col items-center">
       {/* Hero */}
       <section className="w-full max-w-6xl mx-auto px-4 text-center py-20 flex flex-col items-center gap-6">
+        <span className="text-xs font-semibold tracking-widest text-green-700 uppercase bg-green-50 border border-green-200 px-4 py-1.5 rounded-full">
+          AI-Powered Food Waste Management
+        </span>
         <h1 className="text-5xl md:text-6xl font-bold text-gray-900 leading-tight">
           FoodWise
         </h1>
         <p className="text-xl text-gray-500 max-w-xl">
-          Recycling food waste — one user at a time.
+          Classify surplus food, find the right facility, and generate tax documentation — all in under 2 minutes.
         </p>
         <Link
           href="/classify"
           className="flex items-center gap-2 bg-gray-900 text-white px-8 py-3 rounded-full text-base font-semibold hover:bg-gray-800 transition-colors"
         >
-          Get Started <ArrowRight className="w-4 h-4" />
+          Try the Demo <ArrowRight className="w-4 h-4" />
         </Link>
       </section>
 
@@ -69,6 +99,28 @@ export default function Home() {
                 <span className="text-gray-300 text-sm mt-1">{f.description}</span>
               </div>
             </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* Who it's for */}
+      <section className="w-full max-w-6xl mx-auto px-4 pb-20">
+        <div className="text-center mb-10">
+          <h2 className="text-3xl font-bold text-gray-900">Built for food businesses</h2>
+          <p className="text-gray-500 mt-2 max-w-xl mx-auto">
+            Any business that handles food at scale loses money and misses tax savings every day. FoodWise fixes that.
+          </p>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          {audiences.map((a) => (
+            <div key={a.title} className="bg-white border border-gray-200 rounded-2xl p-6 flex gap-4 hover:shadow-md transition-shadow">
+              <div className="text-3xl shrink-0">{a.icon}</div>
+              <div>
+                <h3 className="font-bold text-gray-900 text-lg">{a.title}</h3>
+                <p className="text-sm text-red-500 mt-0.5 mb-2">❌ {a.pain}</p>
+                <p className="text-sm text-gray-600">✅ {a.gain}</p>
+              </div>
+            </div>
           ))}
         </div>
       </section>
