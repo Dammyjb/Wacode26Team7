@@ -2,6 +2,7 @@ import { Facility } from "@/types";
 
 // Mock facilities — in production these come from a live DB / API
 export const MOCK_FACILITIES: Facility[] = [
+  // Donation centers
   {
     id: "1",
     name: "City Food Bank",
@@ -36,6 +37,41 @@ export const MOCK_FACILITIES: Facility[] = [
     capacityPercent: 91,
   },
   {
+    id: "7",
+    name: "Second Servings Houston",
+    type: "donation",
+    address: "2120 Welch St, Houston, TX 77019",
+    lat: 29.749,
+    lng: -95.408,
+    phone: "(713) 555-0707",
+    hours: "Mon–Fri 7am–3pm",
+    capacityPercent: 25,
+  },
+  {
+    id: "8",
+    name: "Star of Hope Mission",
+    type: "donation",
+    address: "6897 Ardmore St, Houston, TX 77054",
+    lat: 29.688,
+    lng: -95.397,
+    phone: "(713) 555-0808",
+    hours: "Daily 8am–6pm",
+    capacityPercent: 55,
+  },
+  {
+    id: "9",
+    name: "Eastside Community Pantry",
+    type: "donation",
+    address: "4500 Canal St, Houston, TX 77011",
+    lat: 29.745,
+    lng: -95.323,
+    phone: "(713) 555-0909",
+    hours: "Wed & Sat 9am–1pm",
+    capacityPercent: 38,
+  },
+
+  // Biodigesters
+  {
     id: "4",
     name: "GreenCycle Biodigester",
     type: "biodigester",
@@ -58,6 +94,30 @@ export const MOCK_FACILITIES: Facility[] = [
     capacityPercent: 78,
   },
   {
+    id: "10",
+    name: "EcoDigest Houston",
+    type: "biodigester",
+    address: "1100 Port St, Houston, TX 77029",
+    lat: 29.752,
+    lng: -95.282,
+    phone: "(713) 555-1010",
+    hours: "Mon–Fri 7am–5pm",
+    capacityPercent: 50,
+  },
+  {
+    id: "11",
+    name: "Organic Power Plant",
+    type: "biodigester",
+    address: "5500 S Wayside Dr, Houston, TX 77087",
+    lat: 29.696,
+    lng: -95.327,
+    phone: "(713) 555-1111",
+    hours: "Mon–Sat 6am–7pm",
+    capacityPercent: 15,
+  },
+
+  // Landfills
+  {
     id: "6",
     name: "Metro Waste Management",
     type: "landfill",
@@ -67,6 +127,28 @@ export const MOCK_FACILITIES: Facility[] = [
     phone: "(713) 555-0505",
     hours: "Mon–Sun 6am–8pm",
     capacityPercent: 88,
+  },
+  {
+    id: "12",
+    name: "Houston South Transfer Station",
+    type: "landfill",
+    address: "11222 S Post Oak Rd, Houston, TX 77035",
+    lat: 29.648,
+    lng: -95.469,
+    phone: "(713) 555-1212",
+    hours: "Mon–Sat 7am–5pm",
+    capacityPercent: 60,
+  },
+  {
+    id: "13",
+    name: "Northeast Recycling Center",
+    type: "landfill",
+    address: "6900 Lockwood Dr, Houston, TX 77028",
+    lat: 29.793,
+    lng: -95.299,
+    phone: "(713) 555-1313",
+    hours: "Mon–Fri 8am–4pm",
+    capacityPercent: 44,
   },
 ];
 

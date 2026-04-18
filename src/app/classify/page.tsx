@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Plus, Trash2, Loader2, ArrowRight, Camera, X, Sparkles } from "lucide-react";
 import { FoodItem, FoodCondition, ClassificationResult } from "@/types";
 import StepBar from "@/components/StepBar";
+import { recordSession } from "@/lib/impact";
 
 const DEMO_ITEMS: FoodItem[] = [
   {
@@ -123,6 +124,7 @@ export default function ClassifyPage() {
       if (!res.ok) throw new Error(data.error || "Classification failed");
       setResults(data.results);
       sessionStorage.setItem("classificationResults", JSON.stringify(data.results));
+      recordSession(data.results);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Unknown error");
     } finally {

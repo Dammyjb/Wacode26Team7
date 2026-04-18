@@ -9,6 +9,7 @@ const steps = [
   { href: "/classify", label: "Classify Food" },
   { href: "/map", label: "Find Facilities" },
   { href: "/tax", label: "Tax Docs" },
+  { href: "/impact", label: "My Impact" },
 ];
 
 export default function NavBar() {
