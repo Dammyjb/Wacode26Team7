@@ -6,22 +6,24 @@ import { Leaf, TrendingUp, Heart, Zap, FileText, Recycle } from "lucide-react";
 
 const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
+const BAR_MAX_PX = 120;
+
 function BarChart({ data }: { data: { label: string; donation: number; biodigester: number; landfill: number }[] }) {
   const max = Math.max(...data.map(d => d.donation + d.biodigester + d.landfill), 1);
   return (
-    <div className="flex items-end gap-2 h-32 w-full">
+    <div className="flex items-end gap-3 w-full" style={{ height: BAR_MAX_PX + 24 }}>
       {data.map((d) => {
         const total = d.donation + d.biodigester + d.landfill;
-        const pct = (total / max) * 100;
-        const donPct = total ? (d.donation / total) * 100 : 0;
-        const bioPct = total ? (d.biodigester / total) * 100 : 0;
-        const lanPct = total ? (d.landfill / total) * 100 : 0;
+        const barH = Math.max(Math.round((total / max) * BAR_MAX_PX), 4);
+        const donH = total ? Math.round((d.donation / total) * barH) : 0;
+        const bioH = total ? Math.round((d.biodigester / total) * barH) : 0;
+        const lanH = barH - donH - bioH;
         return (
-          <div key={d.label} className="flex-1 flex flex-col items-center gap-1">
-            <div className="w-full flex flex-col justify-end rounded overflow-hidden" style={{ height: `${Math.max(pct, 4)}%`, minHeight: 4 }}>
-              <div className="w-full bg-gray-300" style={{ height: `${lanPct}%` }} />
-              <div className="w-full bg-blue-400" style={{ height: `${bioPct}%` }} />
-              <div className="w-full bg-green-500" style={{ height: `${donPct}%` }} />
+          <div key={d.label} className="flex-1 flex flex-col items-center gap-1.5">
+            <div className="w-full rounded overflow-hidden flex flex-col-reverse" style={{ height: barH }}>
+              <div className="w-full bg-green-500 shrink-0" style={{ height: donH }} />
+              <div className="w-full bg-blue-400 shrink-0" style={{ height: bioH }} />
+              <div className="w-full bg-gray-300 shrink-0" style={{ height: lanH }} />
             </div>
             <span className="text-xs text-gray-400">{d.label}</span>
           </div>
@@ -43,10 +45,12 @@ export default function ImpactPage() {
   const diverted = stats.donationLbs + stats.biodigesterLbs;
   const divertedPct = stats.totalLbs ? Math.round((diverted / stats.totalLbs) * 100) : 0;
 
+  // Stable factors per month slot so chart doesn't flicker on re-render
+  const FACTORS = [0.65, 0.80, 0.72, 0.95, 0.88, 1.0];
   const now = new Date();
   const chartData = Array.from({ length: 6 }, (_, i) => {
     const d = new Date(now.getFullYear(), now.getMonth() - 5 + i);
-    const factor = 0.6 + Math.random() * 0.6;
+    const factor = FACTORS[i];
     return {
       label: MONTHS[d.getMonth()],
       donation: Math.round((stats.donationLbs / 6) * factor),
