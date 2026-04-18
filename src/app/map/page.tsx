@@ -72,7 +72,7 @@ export default function MapPage() {
   );
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="max-w-6xl mx-auto px-4 py-8 flex flex-col gap-6">
       <div>
         <h1 className="text-3xl font-bold text-gray-900">Find Nearby Facilities</h1>
         <p className="text-gray-600 mt-1">

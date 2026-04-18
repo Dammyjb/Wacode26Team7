@@ -34,7 +34,7 @@ export default function Home() {
   return (
     <div className="flex flex-col items-center">
       {/* Hero */}
-      <section className="w-full text-center py-20 px-4 flex flex-col items-center gap-6">
+      <section className="w-full max-w-6xl mx-auto px-4 text-center py-20 flex flex-col items-center gap-6">
         <h1 className="text-5xl md:text-6xl font-bold text-gray-900 leading-tight">
           FoodWise
         </h1>
@@ -50,7 +50,7 @@ export default function Home() {
       </section>
 
       {/* Feature image cards */}
-      <section className="w-full max-w-5xl px-4 pb-16">
+      <section className="w-full max-w-6xl mx-auto px-4 pb-16">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           {features.map((f) => (
             <Link
@@ -58,15 +58,12 @@ export default function Home() {
               href={f.href}
               className="group relative rounded-2xl overflow-hidden aspect-[4/3] block shadow-md hover:shadow-xl transition-shadow"
             >
-              {/* Background image */}
               <img
                 src={f.image}
                 alt={f.label}
                 className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
-              {/* Dark overlay */}
               <div className="absolute inset-0 bg-black/50 group-hover:bg-black/40 transition-colors" />
-              {/* Text */}
               <div className="absolute inset-0 flex flex-col justify-end p-5">
                 <span className="text-white font-bold text-xl">{f.label}</span>
                 <span className="text-gray-300 text-sm mt-1">{f.description}</span>
@@ -76,8 +73,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Stats */}
-      <section className="w-full bg-gray-950 py-14 px-4">
+      {/* Stats — full bleed dark section */}
+      <section className="w-screen bg-gray-950 py-14 px-4">
         <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-10 text-center">
           {stats.map((s) => (
             <div key={s.value}>

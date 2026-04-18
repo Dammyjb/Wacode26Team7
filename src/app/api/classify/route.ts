@@ -5,26 +5,35 @@ import { FoodItem, ClassificationResult, FoodCategory } from "@/types";
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
 export async function POST(req: NextRequest) {
-  const { items }: { items: FoodItem[] } = await req.json();
+  try {
+    const body = await req.json();
+    const items: FoodItem[] = body?.items ?? [];
 
-  if (!items?.length) {
-    return NextResponse.json({ error: "No items provided" }, { status: 400 });
-  }
+    if (!items.length) {
+      return NextResponse.json({ error: "No items provided" }, { status: 400 });
+    }
 
-  const itemList = items
-    .map(
-      (item, i) =>
-        `${i + 1}. Name: ${item.name}, Quantity: ${item.quantity} lbs, Condition: ${item.condition}, Expires: ${item.expiryDate}${item.notes ? `, Notes: ${item.notes}` : ""}`
-    )
-    .join("\n");
+    if (!process.env.ANTHROPIC_API_KEY) {
+      return NextResponse.json(
+        { error: "ANTHROPIC_API_KEY is not configured on this server." },
+        { status: 500 }
+      );
+    }
 
-  const message = await client.messages.create({
-    model: "claude-sonnet-4-6",
-    max_tokens: 1024,
-    messages: [
-      {
-        role: "user",
-        content: `You are a food waste classification expert helping food supply chains reduce environmental impact.
+    const itemList = items
+      .map(
+        (item, i) =>
+          `${i + 1}. Name: ${item.name}, Quantity: ${item.quantity} lbs, Condition: ${item.condition}, Expires: ${item.expiryDate}${item.notes ? `, Notes: ${item.notes}` : ""}`
+      )
+      .join("\n");
+
+    const message = await client.messages.create({
+      model: "claude-sonnet-4-6",
+      max_tokens: 1024,
+      messages: [
+        {
+          role: "user",
+          content: `You are a food waste classification expert helping food supply chains reduce environmental impact.
 
 Classify each food item below into exactly one of: "donation", "biodigester", or "landfill".
 
@@ -42,40 +51,44 @@ Items:
 ${itemList}
 
 Item IDs: ${items.map((i) => i.id).join(", ")}`,
-      },
-    ],
-  });
+        },
+      ],
+    });
 
-  const text =
-    message.content[0].type === "text" ? message.content[0].text : "";
+    const text =
+      message.content[0].type === "text" ? message.content[0].text : "";
 
-  let parsed: Array<{
-    id: string;
-    category: FoodCategory;
-    confidence: number;
-    reason: string;
-    estimatedValue?: number;
-  }>;
+    let parsed: Array<{
+      id: string;
+      category: FoodCategory;
+      confidence: number;
+      reason: string;
+      estimatedValue?: number;
+    }>;
 
-  try {
-    parsed = JSON.parse(text);
-  } catch {
-    return NextResponse.json(
-      { error: "Failed to parse AI response", raw: text },
-      { status: 500 }
-    );
+    try {
+      parsed = JSON.parse(text);
+    } catch {
+      return NextResponse.json(
+        { error: "Failed to parse AI response", raw: text },
+        { status: 500 }
+      );
+    }
+
+    const results: ClassificationResult[] = items.map((item) => {
+      const match = parsed.find((p) => p.id === item.id);
+      return {
+        item,
+        category: match?.category ?? "landfill",
+        confidence: match?.confidence ?? 50,
+        reason: match?.reason ?? "Could not classify",
+        estimatedValue: match?.estimatedValue ?? 0,
+      };
+    });
+
+    return NextResponse.json({ results });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Unexpected server error";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
-
-  const results: ClassificationResult[] = items.map((item) => {
-    const match = parsed.find((p) => p.id === item.id);
-    return {
-      item,
-      category: match?.category ?? "landfill",
-      confidence: match?.confidence ?? 50,
-      reason: match?.reason ?? "Could not classify",
-      estimatedValue: match?.estimatedValue ?? 0,
-    };
-  });
-
-  return NextResponse.json({ results });
 }

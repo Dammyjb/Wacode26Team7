@@ -75,7 +75,7 @@ export default function ClassifyPage() {
   }
 
   return (
-    <div className="max-w-3xl mx-auto flex flex-col gap-8">
+    <div className="max-w-3xl mx-auto px-4 py-8 flex flex-col gap-8">
       <div>
         <h1 className="text-3xl font-bold text-gray-900">Classify Surplus Food</h1>
         <p className="text-gray-600 mt-1">

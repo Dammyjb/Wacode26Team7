@@ -20,7 +20,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${geist.className} bg-gray-50 min-h-screen`}>
         <NavBar />
-        <main className="max-w-6xl mx-auto px-4 py-8">{children}</main>
+        <main className="overflow-x-hidden">{children}</main>
       </body>
     </html>
   );
