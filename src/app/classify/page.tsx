@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { Plus, Trash2, Loader2, ArrowRight } from "lucide-react";
+import { Plus, Trash2, Loader2, ArrowRight, Camera, X } from "lucide-react";
 import { FoodItem, FoodCondition, ClassificationResult } from "@/types";
 
 const CATEGORY_COLORS: Record<string, string> = {
@@ -33,7 +33,10 @@ export default function ClassifyPage() {
   const [items, setItems] = useState<FoodItem[]>([newItem()]);
   const [results, setResults] = useState<ClassificationResult[] | null>(null);
   const [loading, setLoading] = useState(false);
+  const [scanning, setScanning] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   function updateItem(id: string, field: keyof FoodItem, value: string | number) {
     setItems((prev) =>
@@ -43,6 +46,50 @@ export default function ClassifyPage() {
 
   function removeItem(id: string) {
     setItems((prev) => prev.filter((item) => item.id !== id));
+  }
+
+  async function handleImageCapture(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const url = URL.createObjectURL(file);
+    setPreviewUrl(url);
+    setScanning(true);
+    setError(null);
+
+    try {
+      const reader = new FileReader();
+      const base64 = await new Promise<string>((resolve, reject) => {
+        reader.onload = () => {
+          const result = reader.result as string;
+          // Strip the data URL prefix (e.g. "data:image/jpeg;base64,")
+          resolve(result.split(",")[1]);
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+
+      const res = await fetch("/api/scan", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ image: base64, mediaType: file.type }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Scan failed");
+
+      // Replace empty item with scanned items
+      setItems((prev) => {
+        const hasEmpty = prev.length === 1 && !prev[0].name && !prev[0].quantity;
+        return hasEmpty ? data.items : [...prev, ...data.items];
+      });
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Failed to scan image");
+    } finally {
+      setScanning(false);
+      // Reset file input so same image can be re-selected
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
   }
 
   async function classify() {
@@ -70,26 +117,72 @@ export default function ClassifyPage() {
     }
   }
 
-  function goToMap() {
-    router.push("/map");
-  }
-
   return (
     <div className="max-w-3xl mx-auto px-4 py-8 flex flex-col gap-8">
       <div>
         <h1 className="text-3xl font-bold text-gray-900">Classify Surplus Food</h1>
         <p className="text-gray-600 mt-1">
-          Enter your end-of-day food items. Our AI will classify each one into the
-          best disposal route.
+          Take a photo or enter items manually — our AI will route each one to donation, biodigester, or landfill.
         </p>
       </div>
 
+      {/* Camera scan section */}
+      <div className="bg-gray-950 rounded-2xl p-5 flex flex-col gap-4">
+        <p className="text-sm font-semibold text-gray-300">Scan with Camera</p>
+
+        {previewUrl && (
+          <div className="relative">
+            <img src={previewUrl} alt="Captured food" className="w-full max-h-56 object-cover rounded-xl" />
+            <button
+              onClick={() => setPreviewUrl(null)}
+              className="absolute top-2 right-2 bg-black/60 text-white rounded-full p-1 hover:bg-black/80"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        )}
+
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          capture="environment"
+          className="hidden"
+          onChange={handleImageCapture}
+        />
+
+        <button
+          onClick={() => fileInputRef.current?.click()}
+          disabled={scanning}
+          className="flex items-center justify-center gap-2 bg-white text-gray-900 px-5 py-3 rounded-xl font-semibold hover:bg-gray-100 disabled:opacity-60 transition-colors"
+        >
+          {scanning ? (
+            <>
+              <Loader2 className="w-5 h-5 animate-spin" />
+              Analyzing image...
+            </>
+          ) : (
+            <>
+              <Camera className="w-5 h-5" />
+              Take Photo / Upload Image
+            </>
+          )}
+        </button>
+        <p className="text-xs text-gray-500 text-center">
+          On mobile this opens your camera directly. AI will detect food items automatically.
+        </p>
+      </div>
+
+      {/* Manual entry */}
       <div className="flex flex-col gap-4">
+        <div className="flex items-center gap-3">
+          <div className="h-px flex-1 bg-gray-200" />
+          <span className="text-xs text-gray-400 font-medium">OR ENTER MANUALLY</span>
+          <div className="h-px flex-1 bg-gray-200" />
+        </div>
+
         {items.map((item, idx) => (
-          <div
-            key={item.id}
-            className="bg-gray-950 rounded-2xl p-5 flex flex-col gap-4"
-          >
+          <div key={item.id} className="bg-gray-950 rounded-2xl p-5 flex flex-col gap-4">
             <div className="flex items-center justify-between">
               <span className="text-sm font-semibold text-gray-400">Item {idx + 1}</span>
               {items.length > 1 && (
@@ -177,9 +270,7 @@ export default function ClassifyPage() {
         className="flex items-center justify-center gap-2 bg-gray-950 text-white px-6 py-3 rounded-full font-semibold hover:bg-gray-800 disabled:opacity-60 transition-colors"
       >
         {loading ? (
-          <>
-            <Loader2 className="w-4 h-4 animate-spin" /> Classifying...
-          </>
+          <><Loader2 className="w-4 h-4 animate-spin" /> Classifying...</>
         ) : (
           "Classify Items"
         )}
@@ -189,15 +280,10 @@ export default function ClassifyPage() {
         <div className="flex flex-col gap-4">
           <h2 className="text-xl font-bold text-gray-900">Results</h2>
           {results.map((r) => (
-            <div
-              key={r.item.id}
-              className="bg-white rounded-2xl border border-gray-200 p-5 flex flex-col gap-2"
-            >
+            <div key={r.item.id} className="bg-white rounded-2xl border border-gray-200 p-5 flex flex-col gap-2">
               <div className="flex items-center justify-between">
                 <span className="font-semibold text-gray-900">{r.item.name}</span>
-                <span
-                  className={`text-xs font-bold px-3 py-1 rounded-full border ${CATEGORY_COLORS[r.category]}`}
-                >
+                <span className={`text-xs font-bold px-3 py-1 rounded-full border ${CATEGORY_COLORS[r.category]}`}>
                   {CATEGORY_LABELS[r.category]}
                 </span>
               </div>
@@ -206,16 +292,14 @@ export default function ClassifyPage() {
                 <span>Confidence: {r.confidence}%</span>
                 <span>{r.item.quantity} lbs</span>
                 {r.estimatedValue ? (
-                  <span className="text-green-700 font-medium">
-                    Est. value: ${r.estimatedValue}
-                  </span>
+                  <span className="text-green-700 font-medium">Est. value: ${r.estimatedValue}</span>
                 ) : null}
               </div>
             </div>
           ))}
 
           <button
-            onClick={goToMap}
+            onClick={() => router.push("/map")}
             className="flex items-center justify-center gap-2 bg-blue-700 text-white px-6 py-3 rounded-full font-semibold hover:bg-blue-800 transition-colors mt-2"
           >
             Find Nearby Facilities <ArrowRight className="w-4 h-4" />
