@@ -6,9 +6,9 @@ import NavBar from "@/components/NavBar";
 const geist = Geist({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "FoodWise — Food Waste Management",
+  title: "Allofood — Smart Food Allocation",
   description:
-    "Classify surplus food, route it to the right facility, and generate tax documentation — all in one place.",
+    "Helping food businesses allocate surplus food smarter. Classify, route to the right facility, and generate tax documentation — all in one place.",
 };
 
 export default function RootLayout({

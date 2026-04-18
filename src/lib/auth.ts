@@ -1,5 +1,5 @@
-export const DEMO_EMAIL = "demo@foodwise.com";
-export const DEMO_PASSWORD = "foodwise2024";
+export const DEMO_EMAIL = "demo@allofood.com";
+export const DEMO_PASSWORD = "allofood2024";
 const SESSION_KEY = "fw_session";
 
 export function login(email: string, password: string): boolean {

@@ -35,7 +35,7 @@ const audiences = [
     icon: "🛒",
     title: "Grocery Stores",
     pain: "Perishables expire before staff can act",
-    gain: "Scan shelves with your phone. FoodWise identifies items and finds the nearest facility with space.",
+    gain: "Scan shelves with your phone. Allofood identifies items and finds the nearest facility with space.",
   },
   {
     icon: "🏫",
@@ -63,13 +63,13 @@ export default function Home() {
       {/* Hero */}
       <section className="w-full max-w-6xl mx-auto px-4 text-center py-20 flex flex-col items-center gap-6">
         <span className="text-xs font-semibold tracking-widest text-green-700 uppercase bg-green-50 border border-green-200 px-4 py-1.5 rounded-full">
-          AI-Powered Food Waste Management
+          AI-Powered Food Allocation Platform
         </span>
         <h1 className="text-5xl md:text-6xl font-bold text-gray-900 leading-tight">
-          FoodWise
+          Allofood
         </h1>
         <p className="text-xl text-gray-500 max-w-xl">
-          Classify surplus food, find the right facility, and generate tax documentation — all in under 2 minutes.
+          Helping food businesses allocate surplus food smarter — classify, route to the right facility, and generate tax docs in under 2 minutes.
         </p>
         <Link
           href="/classify"
@@ -130,7 +130,7 @@ export default function Home() {
         <div className="text-center mb-10">
           <h2 className="text-3xl font-bold text-gray-900">Built for food businesses</h2>
           <p className="text-gray-500 mt-2 max-w-xl mx-auto">
-            Any business that handles food at scale loses money and misses tax savings every day. FoodWise fixes that.
+            Any business that handles food at scale loses money and misses tax savings every day. Allofood fixes that.
           </p>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">

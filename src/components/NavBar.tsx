@@ -21,7 +21,7 @@ export default function NavBar() {
       <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2 font-bold text-white text-lg">
           <Leaf className="w-5 h-5 text-green-400" />
-          FoodWise
+          Allofood
         </Link>
 
         {/* Desktop nav */}

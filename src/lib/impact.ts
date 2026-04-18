@@ -13,7 +13,7 @@ export interface ImpactStats {
 
 const STORAGE_KEY = "fw_impact";
 
-// Pre-seeded history so a restaurant looks like they've been using FoodWise for a month
+// Pre-seeded history so a restaurant looks like they've been using Allofood for a month
 const SEED: ImpactStats = {
   totalSessions: 18,
   totalLbs: 1240,
