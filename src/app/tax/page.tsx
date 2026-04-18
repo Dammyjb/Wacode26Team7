@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { FileText, Download, CheckCircle, Loader2 } from "lucide-react";
+import { FileText, Download, CheckCircle, Loader2, Lock, LogOut } from "lucide-react";
 import { ClassificationResult } from "@/types";
+import { isLoggedIn, login, logout, DEMO_EMAIL, DEMO_PASSWORD } from "@/lib/auth";
 
 interface DonorInfo {
   donorName: string;
@@ -24,10 +25,86 @@ export default function TaxPage() {
   const [generated, setGenerated] = useState(false);
   const [generating, setGenerating] = useState(false);
 
+  // Auth state
+  const [authed, setAuthed] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loginError, setLoginError] = useState("");
+
   useEffect(() => {
+    setAuthed(isLoggedIn());
     const stored = sessionStorage.getItem("classificationResults");
     if (stored) setResults(JSON.parse(stored));
   }, []);
+
+  function handleLogin(e: React.FormEvent) {
+    e.preventDefault();
+    if (login(email, password)) {
+      setAuthed(true);
+      setLoginError("");
+    } else {
+      setLoginError("Invalid credentials. Use the demo account below.");
+    }
+  }
+
+  function handleLogout() {
+    logout();
+    setAuthed(false);
+  }
+
+  if (!authed) {
+    return (
+      <div className="max-w-md mx-auto mt-16 flex flex-col gap-6">
+        <div className="text-center flex flex-col items-center gap-3">
+          <div className="bg-gray-950 p-4 rounded-full">
+            <Lock className="w-8 h-8 text-white" />
+          </div>
+          <h1 className="text-2xl font-bold text-gray-900">Sign in to access Tax Docs</h1>
+          <p className="text-gray-500 text-sm">Tax documentation contains sensitive financial data and requires authentication.</p>
+        </div>
+
+        <form onSubmit={handleLogin} className="bg-white rounded-2xl border border-gray-200 p-6 flex flex-col gap-4">
+          <div>
+            <label className="text-xs font-medium text-gray-500 mb-1 block">Email</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="you@example.com"
+              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
+              required
+            />
+          </div>
+          <div>
+            <label className="text-xs font-medium text-gray-500 mb-1 block">Password</label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="••••••••"
+              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
+              required
+            />
+          </div>
+          {loginError && (
+            <p className="text-red-600 text-xs">{loginError}</p>
+          )}
+          <button
+            type="submit"
+            className="bg-gray-950 text-white px-6 py-2.5 rounded-full font-semibold hover:bg-gray-800 transition-colors text-sm"
+          >
+            Sign In
+          </button>
+        </form>
+
+        <div className="bg-blue-50 border border-blue-200 rounded-xl px-4 py-3 text-sm text-blue-800">
+          <p className="font-semibold mb-1">Demo credentials</p>
+          <p>Email: <span className="font-mono">{DEMO_EMAIL}</span></p>
+          <p>Password: <span className="font-mono">{DEMO_PASSWORD}</span></p>
+        </div>
+      </div>
+    );
+  }
 
   const donations = results.filter((r) => r.category === "donation");
   const totalLbs = donations.reduce((sum, r) => sum + r.item.quantity, 0);
@@ -132,12 +209,20 @@ export default function TaxPage() {
 
   return (
     <div className="max-w-3xl mx-auto flex flex-col gap-8">
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900">Tax Documentation</h1>
-        <p className="text-gray-600 mt-1">
-          Auto-generate a pre-filled IRS Form 8283 for your food donations. Download and file
-          in seconds.
-        </p>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Tax Documentation</h1>
+          <p className="text-gray-600 mt-1">
+            Auto-generate a pre-filled IRS Form 8283 for your food donations. Download and file
+            in seconds.
+          </p>
+        </div>
+        <button
+          onClick={handleLogout}
+          className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-800 transition-colors shrink-0 mt-1"
+        >
+          <LogOut className="w-4 h-4" /> Sign out
+        </button>
       </div>
 
       {donations.length === 0 ? (

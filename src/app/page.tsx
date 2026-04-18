@@ -14,7 +14,7 @@ const features = [
     href: "/map",
     label: "Find Facilities",
     description: "Locate nearby food banks, biodigesters & drop-off points",
-    image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&q=80",
+    image: "https://images.unsplash.com/photo-1593113598332-cd288d649433?w=600&q=80",
   },
   {
     href: "/tax",
