@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { loadImpact, ImpactStats } from "@/lib/impact";
+import { getTier, getBadges } from "@/lib/rewards";
 import { Leaf, TrendingUp, Heart, Zap, FileText, Recycle } from "lucide-react";
 
 const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
@@ -42,6 +43,9 @@ export default function ImpactPage() {
 
   if (!stats) return null;
 
+  const tier = getTier(stats);
+  const badges = getBadges(stats);
+  const earnedBadges = badges.filter(b => b.earned);
   const diverted = stats.donationLbs + stats.biodigesterLbs;
   const divertedPct = stats.totalLbs ? Math.round((diverted / stats.totalLbs) * 100) : 0;
 
@@ -70,6 +74,32 @@ export default function ImpactPage() {
         <div className="bg-green-50 border border-green-200 rounded-2xl px-4 py-2 text-center">
           <p className="text-2xl font-black text-green-700">{divertedPct}%</p>
           <p className="text-xs text-green-600 font-medium">Diverted from landfill</p>
+        </div>
+      </div>
+
+      {/* Tier card */}
+      <div className={`rounded-2xl border p-5 flex items-center gap-5 ${tier.bg} ${tier.border}`}>
+        <div className="text-5xl">{tier.icon}</div>
+        <div className="flex-1">
+          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Current Tier</p>
+          <p className={`text-2xl font-black ${tier.color}`}>{tier.name}</p>
+          {tier.nextLbs && (
+            <div className="mt-2">
+              <div className="flex justify-between text-xs text-gray-500 mb-1">
+                <span>{diverted.toLocaleString()} lbs diverted</span>
+                <span>{tier.nextLbs.toLocaleString()} lbs to reach {tier.nextName}</span>
+              </div>
+              <div className="w-full bg-white rounded-full h-2">
+                <div
+                  className="h-2 rounded-full bg-green-500 transition-all"
+                  style={{ width: `${Math.min((diverted / tier.nextLbs) * 100, 100)}%` }}
+                />
+              </div>
+            </div>
+          )}
+          {!tier.nextLbs && (
+            <p className="text-sm text-gray-500 mt-1">You&apos;ve reached the highest tier! 🎉</p>
+          )}
         </div>
       </div>
 
@@ -150,6 +180,31 @@ export default function ImpactPage() {
             </div>
           );
         })}
+      </div>
+
+      {/* Badges */}
+      <div className="bg-white border border-gray-200 rounded-2xl p-6">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="font-bold text-gray-900">Badges</h2>
+          <span className="text-sm text-gray-500">{earnedBadges.length} / {badges.length} earned</span>
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+          {badges.map((badge) => (
+            <div
+              key={badge.id}
+              className={`flex flex-col items-center text-center p-3 rounded-xl border transition-all ${
+                badge.earned
+                  ? "bg-gray-950 border-gray-800"
+                  : "bg-gray-50 border-gray-200 opacity-40 grayscale"
+              }`}
+            >
+              <span className="text-3xl mb-1">{badge.icon}</span>
+              <p className={`text-xs font-semibold leading-tight ${badge.earned ? "text-white" : "text-gray-500"}`}>
+                {badge.name}
+              </p>
+            </div>
+          ))}
+        </div>
       </div>
 
       <div className="flex items-center gap-2 bg-green-50 border border-green-200 rounded-2xl px-5 py-4">

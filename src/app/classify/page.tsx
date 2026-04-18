@@ -5,7 +5,10 @@ import { useRouter } from "next/navigation";
 import { Plus, Trash2, Loader2, ArrowRight, Camera, X, Sparkles } from "lucide-react";
 import { FoodItem, FoodCondition, ClassificationResult } from "@/types";
 import StepBar from "@/components/StepBar";
+import BadgeToast from "@/components/BadgeToast";
 import { recordSession } from "@/lib/impact";
+import { getNewlyUnlocked } from "@/lib/rewards";
+import type { Badge } from "@/lib/rewards";
 
 const DEMO_ITEMS: FoodItem[] = [
   {
@@ -67,6 +70,7 @@ export default function ClassifyPage() {
   const [scanning, setScanning] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [newBadges, setNewBadges] = useState<Badge[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   function updateItem(id: string, field: keyof FoodItem, value: string | number) {
@@ -124,7 +128,9 @@ export default function ClassifyPage() {
       if (!res.ok) throw new Error(data.error || "Classification failed");
       setResults(data.results);
       sessionStorage.setItem("classificationResults", JSON.stringify(data.results));
-      recordSession(data.results);
+      const updatedStats = recordSession(data.results);
+      const unlocked = getNewlyUnlocked(updatedStats);
+      if (unlocked.length) setNewBadges(unlocked);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Unknown error");
     } finally {
@@ -238,6 +244,10 @@ export default function ClassifyPage() {
       </button>
 
       {/* Results */}
+      {newBadges.length > 0 && (
+        <BadgeToast badges={newBadges} onDone={() => setNewBadges([])} />
+      )}
+
       {results && (
         <div className="flex flex-col gap-4">
           {/* Summary bar */}
