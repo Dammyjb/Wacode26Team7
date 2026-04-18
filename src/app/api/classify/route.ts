@@ -4,22 +4,61 @@ import { FoodItem, ClassificationResult, FoodCategory } from "@/types";
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
+function mockClassify(items: FoodItem[]): ClassificationResult[] {
+  return items.map((item) => {
+    const name = item.name.toLowerCase();
+    const spoiled = item.condition === "spoiled";
+    const nearExpiry = item.condition === "near-expiry";
+
+    let category: FoodCategory;
+    let reason: string;
+    let estimatedValue = 0;
+    let confidence: number;
+
+    if (name.includes("plastic") || name.includes("packaging")) {
+      category = "landfill";
+      reason = "Non-organic material cannot be donated or biodigested.";
+      confidence = 95;
+    } else if (spoiled) {
+      category = "biodigester";
+      reason = "Spoiled organic food is ideal for anaerobic digestion to produce energy and compost.";
+      confidence = 88;
+    } else if (nearExpiry) {
+      category = "donation";
+      reason = "Near-expiry food is still safe for human consumption and should be donated before it spoils.";
+      estimatedValue = Math.round(item.quantity * 1.5);
+      confidence = 82;
+    } else {
+      category = "donation";
+      reason = "Fresh food in good condition is suitable for donation to food banks and community pantries.";
+      estimatedValue = Math.round(item.quantity * 2.5);
+      confidence = 94;
+    }
+
+    return { item, category, confidence, reason, estimatedValue };
+  });
+}
+
 export async function POST(req: NextRequest) {
+  let items: FoodItem[] = [];
+
   try {
     const body = await req.json();
-    const items: FoodItem[] = body?.items ?? [];
+    items = body?.items ?? [];
+  } catch {
+    return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
+  }
 
-    if (!items.length) {
-      return NextResponse.json({ error: "No items provided" }, { status: 400 });
-    }
+  if (!items.length) {
+    return NextResponse.json({ error: "No items provided" }, { status: 400 });
+  }
 
-    if (!process.env.ANTHROPIC_API_KEY) {
-      return NextResponse.json(
-        { error: "ANTHROPIC_API_KEY is not configured on this server." },
-        { status: 500 }
-      );
-    }
+  // No API key — use mock
+  if (!process.env.ANTHROPIC_API_KEY) {
+    return NextResponse.json({ results: mockClassify(items), demo: true });
+  }
 
+  try {
     const itemList = items
       .map(
         (item, i) =>
@@ -88,7 +127,11 @@ Item IDs: ${items.map((i) => i.id).join(", ")}`,
 
     return NextResponse.json({ results });
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Unexpected server error";
-    return NextResponse.json({ error: message }, { status: 500 });
+    // Billing/quota error — fall back to mock silently
+    const msg = err instanceof Error ? err.message : "";
+    if (msg.includes("credit") || msg.includes("billing") || msg.includes("quota") || msg.includes("balance")) {
+      return NextResponse.json({ results: mockClassify(items), demo: true });
+    }
+    return NextResponse.json({ error: msg || "Unexpected server error" }, { status: 500 });
   }
 }
