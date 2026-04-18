@@ -126,12 +126,8 @@ Item IDs: ${items.map((i) => i.id).join(", ")}`,
     });
 
     return NextResponse.json({ results });
-  } catch (err) {
-    // Billing/quota error — fall back to mock silently
-    const msg = err instanceof Error ? err.message : "";
-    if (msg.includes("credit") || msg.includes("billing") || msg.includes("quota") || msg.includes("balance")) {
-      return NextResponse.json({ results: mockClassify(items), demo: true });
-    }
-    return NextResponse.json({ error: msg || "Unexpected server error" }, { status: 500 });
+  } catch {
+    // Any API failure (credits, network, etc.) — fall back to mock
+    return NextResponse.json({ results: mockClassify(items), demo: true });
   }
 }
