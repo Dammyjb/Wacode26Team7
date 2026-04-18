@@ -88,14 +88,14 @@ export default function ClassifyPage() {
         {items.map((item, idx) => (
           <div
             key={item.id}
-            className="bg-white rounded-2xl border border-gray-200 p-5 flex flex-col gap-4"
+            className="bg-gray-950 rounded-2xl p-5 flex flex-col gap-4"
           >
             <div className="flex items-center justify-between">
-              <span className="text-sm font-semibold text-gray-500">Item {idx + 1}</span>
+              <span className="text-sm font-semibold text-gray-400">Item {idx + 1}</span>
               {items.length > 1 && (
                 <button
                   onClick={() => removeItem(item.id)}
-                  className="text-red-400 hover:text-red-600 transition-colors"
+                  className="text-red-400 hover:text-red-300 transition-colors"
                 >
                   <Trash2 className="w-4 h-4" />
                 </button>
@@ -103,31 +103,31 @@ export default function ClassifyPage() {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="col-span-2">
-                <label className="text-xs font-medium text-gray-500 mb-1 block">Food Name</label>
+                <label className="text-xs font-medium text-gray-400 mb-1 block">Food Name</label>
                 <input
                   type="text"
                   placeholder="e.g. Sliced bread, Cooked rice..."
                   value={item.name}
                   onChange={(e) => updateItem(item.id, "name", e.target.value)}
-                  className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                  className="w-full bg-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
                 />
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-500 mb-1 block">Quantity (lbs)</label>
+                <label className="text-xs font-medium text-gray-400 mb-1 block">Quantity (lbs)</label>
                 <input
                   type="number"
                   min={0}
                   value={item.quantity || ""}
                   onChange={(e) => updateItem(item.id, "quantity", parseFloat(e.target.value) || 0)}
-                  className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                  className="w-full bg-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
                 />
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-500 mb-1 block">Condition</label>
+                <label className="text-xs font-medium text-gray-400 mb-1 block">Condition</label>
                 <select
                   value={item.condition}
                   onChange={(e) => updateItem(item.id, "condition", e.target.value as FoodCondition)}
-                  className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                  className="w-full bg-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
                 >
                   <option value="fresh">Fresh</option>
                   <option value="near-expiry">Near Expiry</option>
@@ -135,22 +135,22 @@ export default function ClassifyPage() {
                 </select>
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-500 mb-1 block">Expiry Date</label>
+                <label className="text-xs font-medium text-gray-400 mb-1 block">Expiry Date</label>
                 <input
                   type="date"
                   value={item.expiryDate}
                   onChange={(e) => updateItem(item.id, "expiryDate", e.target.value)}
-                  className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                  className="w-full bg-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
                 />
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-500 mb-1 block">Notes (optional)</label>
+                <label className="text-xs font-medium text-gray-400 mb-1 block">Notes (optional)</label>
                 <input
                   type="text"
                   placeholder="e.g. Opened package, mixed items..."
                   value={item.notes || ""}
                   onChange={(e) => updateItem(item.id, "notes", e.target.value)}
-                  className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                  className="w-full bg-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
                 />
               </div>
             </div>
@@ -174,7 +174,7 @@ export default function ClassifyPage() {
       <button
         onClick={classify}
         disabled={loading}
-        className="flex items-center justify-center gap-2 bg-green-700 text-white px-6 py-3 rounded-full font-semibold hover:bg-green-800 disabled:opacity-60 transition-colors"
+        className="flex items-center justify-center gap-2 bg-gray-950 text-white px-6 py-3 rounded-full font-semibold hover:bg-gray-800 disabled:opacity-60 transition-colors"
       >
         {loading ? (
           <>
