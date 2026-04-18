@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { FileText, Download, CheckCircle, Loader2, Lock, LogOut } from "lucide-react";
 import { ClassificationResult } from "@/types";
 import { isLoggedIn, login, logout, DEMO_EMAIL, DEMO_PASSWORD } from "@/lib/auth";
+import StepBar from "@/components/StepBar";
 
 interface DonorInfo {
   donorName: string;
@@ -219,10 +220,11 @@ export default function TaxPage() {
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-8 flex flex-col gap-8">
+      <StepBar current={3} />
       <div className="flex items-start justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Tax Documentation</h1>
-          <p className="text-gray-600 mt-1">
+          <p className="text-gray-500 mt-1">
             Auto-generate a pre-filled IRS Form 8283 for your food donations. Download and file
             in seconds.
           </p>

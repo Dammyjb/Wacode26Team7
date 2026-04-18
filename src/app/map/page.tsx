@@ -6,6 +6,7 @@ import dynamic from "next/dynamic";
 import { MapPin, Phone, Clock, ArrowRight, Navigation } from "lucide-react";
 import { ClassificationResult, Facility, FoodCategory, getCapacityStatus } from "@/types";
 import { MOCK_FACILITIES } from "@/lib/mockFacilities";
+import StepBar from "@/components/StepBar";
 
 const CAPACITY_STYLES = {
   available: { bar: "bg-green-500", text: "text-green-700", bg: "bg-green-50 border-green-200", label: "Space Available" },
@@ -29,9 +30,9 @@ const CATEGORY_COLORS: Record<FoodCategory, string> = {
 };
 
 const CATEGORY_PIN: Record<FoodCategory, string> = {
-  donation: "🟢",
-  biodigester: "🔵",
-  landfill: "⚫",
+  donation: "●",
+  biodigester: "◆",
+  landfill: "▲",
 };
 
 const CATEGORY_LABEL: Record<FoodCategory, string> = {
@@ -73,10 +74,11 @@ export default function MapPage() {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8 flex flex-col gap-6">
+      <StepBar current={2} />
       <div>
         <h1 className="text-3xl font-bold text-gray-900">Find Nearby Facilities</h1>
-        <p className="text-gray-600 mt-1">
-          Based on your food classification, here are the closest facilities for each route.
+        <p className="text-gray-500 mt-1">
+          Based on your classification, here are the closest facilities for each route.
         </p>
       </div>
 
