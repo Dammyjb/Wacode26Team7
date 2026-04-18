@@ -207,12 +207,12 @@ export default function ClassifyPage() {
                     <option value="spoiled">Spoiled</option>
                   </select>
                 </div>
-                <div>
+                <div className="col-span-2">
                   <input type="date" value={item.expiryDate}
                     onChange={(e) => updateItem(item.id, "expiryDate", e.target.value)}
                     className="w-full bg-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500" />
                 </div>
-                <div>
+                <div className="col-span-2">
                   <input type="text" placeholder="Notes (optional)" value={item.notes || ""}
                     onChange={(e) => updateItem(item.id, "notes", e.target.value)}
                     className="w-full bg-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500" />

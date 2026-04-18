@@ -65,6 +65,20 @@ export default function TaxPage() {
           <p className="text-gray-500 text-sm">Tax documentation contains sensitive financial data and requires authentication.</p>
         </div>
 
+        {/* One-click demo access */}
+        <button
+          onClick={() => { login(DEMO_EMAIL, DEMO_PASSWORD); setAuthed(true); }}
+          className="w-full bg-green-600 hover:bg-green-500 text-white px-6 py-3 rounded-full font-semibold transition-colors text-sm"
+        >
+          Continue with Demo Account
+        </button>
+
+        <div className="flex items-center gap-3">
+          <div className="h-px flex-1 bg-gray-200" />
+          <span className="text-xs text-gray-400">or sign in with your account</span>
+          <div className="h-px flex-1 bg-gray-200" />
+        </div>
+
         <form onSubmit={handleLogin} className="bg-white rounded-2xl border border-gray-200 p-6 flex flex-col gap-4">
           <div>
             <label className="text-xs font-medium text-gray-500 mb-1 block">Email</label>
@@ -88,9 +102,7 @@ export default function TaxPage() {
               required
             />
           </div>
-          {loginError && (
-            <p className="text-red-600 text-xs">{loginError}</p>
-          )}
+          {loginError && <p className="text-red-600 text-xs">{loginError}</p>}
           <button
             type="submit"
             className="bg-gray-950 text-white px-6 py-2.5 rounded-full font-semibold hover:bg-gray-800 transition-colors text-sm"
@@ -99,12 +111,12 @@ export default function TaxPage() {
           </button>
         </form>
 
-        <button
-          onClick={() => setShowCreds((v) => !v)}
-          className="text-xs text-gray-400 hover:text-gray-600 transition-colors text-center w-full"
-        >
-          {showCreds ? "Hide" : "Show"} demo credentials
-        </button>
+        <p className="text-xs text-gray-400 text-center">
+          This is a demo app.{" "}
+          <button onClick={() => setShowCreds(v => !v)} className="underline hover:text-gray-600">
+            {showCreds ? "Hide" : "View"} demo credentials
+          </button>
+        </p>
 
         {showCreds && (
           <div className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-700">

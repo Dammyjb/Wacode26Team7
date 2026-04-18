@@ -103,6 +103,28 @@ export default function Home() {
         </div>
       </section>
 
+      {/* How it works */}
+      <section className="w-full max-w-6xl mx-auto px-4 pb-20">
+        <div className="text-center mb-10">
+          <h2 className="text-3xl font-bold text-gray-900">How it works</h2>
+          <p className="text-gray-500 mt-2">Three steps. Under two minutes.</p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {[
+            { step: "01", icon: "📸", title: "Scan or Enter Food", desc: "Take a photo of your surplus food or type items manually. Our AI instantly identifies what you have." },
+            { step: "02", icon: "🗺️", title: "Get Routed", desc: "Each item is classified — donation, biodigester, or landfill — and matched to the nearest facility with available capacity." },
+            { step: "03", icon: "📄", title: "Download Tax Docs", desc: "Auto-generate a pre-filled IRS Form 8283 for every donation. Download, sign, and file for your tax deduction." },
+          ].map((s) => (
+            <div key={s.step} className="relative bg-white border border-gray-200 rounded-2xl p-6">
+              <span className="text-5xl font-black text-gray-100 absolute top-4 right-5 select-none">{s.step}</span>
+              <div className="text-3xl mb-3">{s.icon}</div>
+              <h3 className="font-bold text-gray-900 text-lg mb-2">{s.title}</h3>
+              <p className="text-gray-500 text-sm leading-relaxed">{s.desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* Who it's for */}
       <section className="w-full max-w-6xl mx-auto px-4 pb-20">
         <div className="text-center mb-10">
