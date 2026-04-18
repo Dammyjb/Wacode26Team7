@@ -2,9 +2,19 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import dynamic from "next/dynamic";
 import { MapPin, Phone, Clock, ArrowRight, Navigation } from "lucide-react";
 import { ClassificationResult, Facility, FoodCategory } from "@/types";
 import { MOCK_FACILITIES } from "@/lib/mockFacilities";
+
+const FacilityMap = dynamic(() => import("@/components/FacilityMap"), {
+  ssr: false,
+  loading: () => (
+    <div className="flex items-center justify-center h-full text-gray-400 text-sm">
+      Loading map...
+    </div>
+  ),
+});
 
 const CATEGORY_COLORS: Record<FoodCategory, string> = {
   donation: "bg-green-100 text-green-800 border-green-200",
@@ -50,12 +60,10 @@ export default function MapPage() {
     selectedCategory === "all" ? neededCategories : [selectedCategory];
 
   const facilities = MOCK_FACILITIES.filter((f) =>
-    displayedCategories.includes(f.type)
+    displayedCategories.length === 0
+      ? true
+      : displayedCategories.includes(f.type)
   );
-
-  function goToTax() {
-    router.push("/tax");
-  }
 
   return (
     <div className="flex flex-col gap-6">
@@ -125,9 +133,7 @@ export default function MapPage() {
             >
               <div className="flex items-start justify-between gap-2">
                 <span className="font-semibold text-gray-900 text-sm">{facility.name}</span>
-                <span
-                  className={`text-xs px-2 py-0.5 rounded-full border shrink-0 ${CATEGORY_COLORS[facility.type]}`}
-                >
+                <span className={`text-xs px-2 py-0.5 rounded-full border shrink-0 ${CATEGORY_COLORS[facility.type]}`}>
                   {CATEGORY_LABEL[facility.type]}
                 </span>
               </div>
@@ -165,38 +171,19 @@ export default function MapPage() {
           )}
         </div>
 
-        {/* Map placeholder — replace with Google Maps in production */}
-        <div className="lg:col-span-2 bg-white rounded-2xl border border-gray-200 overflow-hidden min-h-[540px] relative">
-          <div className="absolute inset-0 bg-gradient-to-br from-green-50 to-blue-50 flex flex-col items-center justify-center gap-4">
-            <div className="text-center">
-              <MapPin className="w-12 h-12 text-green-600 mx-auto mb-2" />
-              <p className="font-semibold text-gray-700">Interactive Map</p>
-              <p className="text-sm text-gray-500 mt-1 max-w-xs">
-                Add a Google Maps API key in <code className="bg-white px-1 rounded">.env.local</code> to
-                enable live facility routing.
-              </p>
-            </div>
-            <div className="flex flex-col gap-2 w-full max-w-sm px-4">
-              {facilities.slice(0, 4).map((f) => (
-                <div
-                  key={f.id}
-                  className={`flex items-center gap-2 bg-white rounded-xl px-4 py-2 text-sm shadow-sm border ${
-                    selectedFacility?.id === f.id ? "border-green-400" : "border-gray-100"
-                  }`}
-                >
-                  <span>{CATEGORY_PIN[f.type]}</span>
-                  <span className="font-medium text-gray-800 truncate">{f.name}</span>
-                  <span className="text-gray-400 text-xs ml-auto shrink-0">{f.address.split(",")[1]?.trim()}</span>
-                </div>
-              ))}
-            </div>
-          </div>
+        {/* Live OpenStreetMap */}
+        <div className="lg:col-span-2 bg-white rounded-2xl border border-gray-200 overflow-hidden min-h-[540px]">
+          <FacilityMap
+            facilities={facilities}
+            selected={selectedFacility}
+            onSelect={setSelectedFacility}
+          />
         </div>
       </div>
 
       <div className="flex justify-end">
         <button
-          onClick={goToTax}
+          onClick={() => router.push("/tax")}
           className="flex items-center gap-2 bg-purple-700 text-white px-6 py-3 rounded-full font-semibold hover:bg-purple-800 transition-colors"
         >
           Generate Tax Docs <ArrowRight className="w-4 h-4" />
