@@ -158,6 +158,22 @@ export default function Home() {
           ))}
         </div>
       </section>
+
+      {/* Footer */}
+      <footer className="w-full bg-gray-950 border-t border-gray-800 py-6 px-4">
+        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-gray-500">
+          <p>© 2026 Allofood — Helping food businesses allocate food smarter.</p>
+          <a
+            href="https://wacode26-team7.vercel.app"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1.5 text-green-400 hover:text-green-300 transition-colors font-medium"
+          >
+            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 19.5h20L12 2z"/></svg>
+            Deployed on Vercel
+          </a>
+        </div>
+      </footer>
     </div>
   );
 }
