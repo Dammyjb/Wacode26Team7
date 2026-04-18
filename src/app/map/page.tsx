@@ -4,8 +4,14 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { MapPin, Phone, Clock, ArrowRight, Navigation } from "lucide-react";
-import { ClassificationResult, Facility, FoodCategory } from "@/types";
+import { ClassificationResult, Facility, FoodCategory, getCapacityStatus } from "@/types";
 import { MOCK_FACILITIES } from "@/lib/mockFacilities";
+
+const CAPACITY_STYLES = {
+  available: { bar: "bg-green-500", text: "text-green-700", bg: "bg-green-50 border-green-200", label: "Space Available" },
+  limited:   { bar: "bg-yellow-500", text: "text-yellow-700", bg: "bg-yellow-50 border-yellow-200", label: "Almost Full" },
+  full:      { bar: "bg-red-500", text: "text-red-700", bg: "bg-red-50 border-red-200", label: "At Capacity" },
+};
 
 const FacilityMap = dynamic(() => import("@/components/FacilityMap"), {
   ssr: false,
@@ -153,6 +159,25 @@ export default function MapPage() {
                   {facility.phone}
                 </div>
               )}
+              {/* Capacity indicator */}
+              {(() => {
+                const status = getCapacityStatus(facility.capacityPercent);
+                const style = CAPACITY_STYLES[status];
+                return (
+                  <div className={`rounded-lg border px-2 py-1.5 ${style.bg}`}>
+                    <div className="flex justify-between items-center mb-1">
+                      <span className={`text-xs font-semibold ${style.text}`}>{style.label}</span>
+                      <span className={`text-xs ${style.text}`}>{facility.capacityPercent}% full</span>
+                    </div>
+                    <div className="w-full bg-white rounded-full h-1.5">
+                      <div
+                        className={`h-1.5 rounded-full ${style.bar}`}
+                        style={{ width: `${facility.capacityPercent}%` }}
+                      />
+                    </div>
+                  </div>
+                );
+              })()}
               <a
                 href={`https://maps.google.com/?q=${encodeURIComponent(facility.address)}`}
                 target="_blank"

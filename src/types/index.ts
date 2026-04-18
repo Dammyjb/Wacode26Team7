@@ -29,6 +29,15 @@ export interface Facility {
   hours?: string;
   distanceMiles?: number;
   driveMins?: number;
+  capacityPercent: number; // 0–100: how full the facility currently is
+}
+
+export type CapacityStatus = "available" | "limited" | "full";
+
+export function getCapacityStatus(pct: number): CapacityStatus {
+  if (pct >= 85) return "full";
+  if (pct >= 60) return "limited";
+  return "available";
 }
 
 export interface DonationSummary {
